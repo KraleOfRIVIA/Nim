@@ -1,52 +1,52 @@
-// Ñòðóêòóðà äàííûõ è âûâîä èãðîâîãî ïîëÿ
-// - ñòðóêòóðû  player and field 
+// Структура данных и вывод игрового поля
+// - структуры  player and field 
 #include <stdio.h>
 #include <string.h>
 #include<stdlib.h>
 #include <locale.h>
-int gameover=0;
-int kol_kuci;
+int gameover=0; // Условие начала и конца игры 
+int kol_kuci; // Кол-во куч спичек 
 struct player
 {
-    int gamers; // êîë-âî èãðîêîâ 
-    int movepl; // êîë-âî õîäîâ âñåãî
+    int gamers; // кол-во игроков 
+    int movepl; // кол-во ходов всего
 }pl;
 struct Field
 {
-    int kuci[]; // êîë-âî êó÷
+    int kuci[]; // кол-во куч
 }fi;
 
-void setup()
+void setup() // Настройки игры 
 {
-    pl.movepl = 1;
+    pl.movepl = 1; 
     pl.gamers;
-    printf("Èãðà íà÷àëàñü!\n");
-    printf("Çàäàéòå ïàðàìåòðû\n");
-    printf("Ñêîëüêî êó÷?: \n");
+    printf("Игра началась!\n");
+    printf("Задайте параметры\n");
+    printf("Сколько куч?: \n");
     scanf_s("%i", &kol_kuci);
 
     for (int i = 0; i < kol_kuci; i++)
     {
-        printf("Ñêîëüêî ñïè÷åê â êó÷å ¹ %i :", i+1);
+        printf("Сколько спичек в куче № %i :", i+1);
         scanf_s("%i", &fi.kuci[i]);
     }
-    printf("Ñêîëüêî èãðîêîâ?: ");
+    printf("Сколько игроков?: ");
     scanf_s("%i",& pl.gamers);
 }
 
-void print_field()
+void print_field() // Вывод информации 
 {
-    system("cls");
+    system("cls"); // Очистка поля 
     for (int i=0; i < kol_kuci; i++) 
     {
-        printf("\nÊó÷à ¹ %i  : %i\n", i+1, fi.kuci[i]);
+        printf("\nКуча № %i  : %i\n", i+1, fi.kuci[i]);
     }
 }
-void gamelogic()
+void gamelogic() // Игровая логика при игре с игроками 
 {
-    int cor = 0;
-    int number;
-    int count;
+    int cor = 0; // Переменная для подсчета пустых куч 
+    int number; // Номер кучи 
+    int count; // Кол-во отнимаемых спичек 
     int i;
     for (i = 1;gameover==0; pl.movepl++ && i++)
     {
@@ -56,24 +56,24 @@ void gamelogic()
         }
         
         print_field();
-        printf("\nÕîä èãðîêà ¹%i\n",i);
-        printf("Ââåäèòå íîìåð êó÷è\n");
+        printf("\nХод игрока №%i\n",i);
+        printf("Введите номер кучи\n");
         scanf_s("%i", &number);
         if (fi.kuci[number - 1] == 0)
         {
             while (fi.kuci[number - 1] == 0)
             {
-                printf("Ýòó êó÷ó íåëüçÿ âûáðàòü, âûáåðèòå äðóãóþ: ");
+                printf("Эту кучу нельзя выбрать, выберите другую: ");
                 scanf_s("%i", &number);
             }
         }
-        printf("Ñêîëüêî îòíÿòü?\n");
+        printf("Сколько отнять?\n");
         scanf_s("%i", &count);
         if (count > fi.kuci[number - 1])
         {
             while (count > fi.kuci[number - 1])
             {
-                printf("Ñëèøêîì ìíîãî!\n Ââåäèòå çàíîâî");
+                printf("Слишком много!\n Введите заново");
                 scanf_s("%i", &count);
             }
         }
@@ -82,50 +82,50 @@ void gamelogic()
             cor += 1;
         if (cor == kol_kuci)
             gameover = 1;
-        printf("Õîäîâ ñîâåðøåíî %i \n", pl.movepl);
+        printf("Ходов совершено %i \n", pl.movepl);
         print_field();
     }
-    printf("\nÏðîèãðàë èãðîê ¹%i\n", i-1);
+    printf("\nПроиграл игрок №%i\n", i-1);
 }
-void game_s_pc()
+void game_s_pc() // Игровая логика при игре с компьютером 
 {
     pl.movepl = 1;
     int cor = 0;
     int number=0;
     int count=0;
     int i;
-    int number_pc=0;
+    int number_pc=0; // Отдельные переменные для компьютера 
     int count_pc;
     for (i = 1; gameover == 0; pl.movepl++ && i++)
     {
         if (pl.movepl % 2 != 0)
         {
             print_field();
-            printf("\nÕîä èãðîêà \n");
-            printf("Ââåäèòå íîìåð êó÷è\n");
+            printf("\nХод игрока \n");
+            printf("Введите номер кучи\n");
             scanf_s("%i", &number);
             if (fi.kuci[number - 1] == 0)
             {
                 while (fi.kuci[number - 1] == 0)
                 {
-                    printf("Ýòó êó÷ó íåëüçÿ âûáðàòü, âûáåðèòå äðóãóþ: ");
+                    printf("Эту кучу нельзя выбрать, выберите другую: ");
                     scanf_s("%i", &number);
                 }
             }
-            printf("Ñêîëüêî îòíÿòü?\n");
+            printf("Сколько отнять?\n");
             scanf_s("%i", &count);
             if (count > fi.kuci[number - 1])
             {
                 while (count > fi.kuci[number - 1])
                 {
-                    printf("Ñëèøêîì ìíîãî!\n Ââåäèòå çàíîâî");
+                    printf("Слишком много!\n Введите заново");
                     scanf_s("%i", &count);
                 }
             }
         }
         if (pl.movepl % 2 == 0) 
         {
-            printf("Õîä êîìïüþòåðà\n");
+            printf("Ход компьютера\n");
             while (number_pc != kol_kuci) 
             {
                 if (fi.kuci[number_pc] > 1)
@@ -144,10 +144,10 @@ void game_s_pc()
             cor += 1;
         if (cor == kol_kuci)
             gameover = 1;
-        printf("Õîäîâ ñîâåðøåíî %i \n", pl.movepl);
+        printf("Ходов совершено %i \n", pl.movepl);
         print_field();
     }
-    printf("\nÏðîèãðàë èãðîê ¹%i\n", i - 1);
+    printf("\nПроиграл игрок №%i\n", i - 1);
 
 }
 int main()
