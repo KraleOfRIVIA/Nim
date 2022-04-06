@@ -2,8 +2,10 @@
 // - структуры  player and field 
 #include <stdio.h>
 #include <string.h>
+#include<stdlib.h>
 #include <locale.h>
-
+int gameover=0;
+int kol_kuci;
 struct player
 {
     int gamers; // кол-во игроков 
@@ -11,55 +13,149 @@ struct player
 }pl;
 struct Field
 {
-    int kuci[3]; // кол-во куч
+    int kuci[]; // кол-во куч
 }fi;
 
-void print_info()
+void setup()
 {
-    printf("Кол-во игроков %i\n", pl.gamers);
-    //printf("Ход игрока %i\n",pl.motion);
+    pl.movepl = 1;
+    pl.gamers;
+    printf("Игра началась!\n");
+    printf("Задайте параметры\n");
+    printf("Сколько куч?: \n");
+    scanf_s("%i", &kol_kuci);
+
+    for (int i = 0; i < kol_kuci; i++)
+    {
+        printf("Сколько спичек в куче № %i :", i+1);
+        scanf_s("%i", &fi.kuci[i]);
+    }
+    printf("Сколько игроков?: ");
+    scanf_s("%i",& pl.gamers);
 }
 
 void print_field()
 {
-    printf("Первая %i\n", fi.kuci[0]);
-    printf("Вторая  %i\n", fi.kuci[1]);
-    printf("Третья %i\n", fi.kuci[2]);
+    system("cls");
+    for (int i=0; i < kol_kuci; i++) 
+    {
+        printf("\nКуча № %i  : %i\n", i+1, fi.kuci[i]);
+    }
 }
 void gamelogic()
 {
+    int cor = 0;
     int number;
     int count;
-    pl.movepl = 1;
-    printf("Игра началась!\n");
-    print_field();
-    for (; (fi.kuci[0] || fi.kuci[1] || fi.kuci[2]) > 0; pl.movepl++)
+    int i;
+    for (i = 1;gameover==0; pl.movepl++ && i++)
     {
-        if (pl.movepl % 2 != 0)
-            printf("Ход первого игрока\n");
-        else
-            printf("Ход второго игрока\n");
+        if (i > pl.gamers)
+        {
+            i = 1; 
+        }
+        
+        print_field();
+        printf("\nХод игрока №%i\n",i);
         printf("Введите номер кучи\n");
         scanf_s("%i", &number);
+        if (fi.kuci[number - 1] == 0)
+        {
+            while (fi.kuci[number - 1] == 0)
+            {
+                printf("Эту кучу нельзя выбрать, выберите другую: ");
+                scanf_s("%i", &number);
+            }
+        }
         printf("Сколько отнять?\n");
         scanf_s("%i", &count);
+        if (count > fi.kuci[number - 1])
+        {
+            while (count > fi.kuci[number - 1])
+            {
+                printf("Слишком много!\n Введите заново");
+                scanf_s("%i", &count);
+            }
+        }
         fi.kuci[number - 1] -= count;
+        if (fi.kuci[number - 1] == 0)
+            cor += 1;
+        if (cor == kol_kuci)
+            gameover = 1;
         printf("Ходов совершено %i \n", pl.movepl);
         print_field();
     }
-    if (pl.movepl % 2 == 0)
-        printf("Выиграл второй игрок\n");
-    else
-        printf("Выиграл первый игрок\n");
+    printf("\nПроиграл игрок №%i\n", i-1);
+}
+void game_s_pc()
+{
+    pl.movepl = 1;
+    int cor = 0;
+    int number=0;
+    int count=0;
+    int i;
+    int number_pc=0;
+    int count_pc;
+    for (i = 1; gameover == 0; pl.movepl++ && i++)
+    {
+        if (pl.movepl % 2 != 0)
+        {
+            print_field();
+            printf("\nХод игрока \n");
+            printf("Введите номер кучи\n");
+            scanf_s("%i", &number);
+            if (fi.kuci[number - 1] == 0)
+            {
+                while (fi.kuci[number - 1] == 0)
+                {
+                    printf("Эту кучу нельзя выбрать, выберите другую: ");
+                    scanf_s("%i", &number);
+                }
+            }
+            printf("Сколько отнять?\n");
+            scanf_s("%i", &count);
+            if (count > fi.kuci[number - 1])
+            {
+                while (count > fi.kuci[number - 1])
+                {
+                    printf("Слишком много!\n Введите заново");
+                    scanf_s("%i", &count);
+                }
+            }
+        }
+        if (pl.movepl % 2 == 0) 
+        {
+            printf("Ход компьютера\n");
+            while (number_pc != kol_kuci) 
+            {
+                if (fi.kuci[number_pc] > 1)
+                {
+                    count_pc = fi.kuci[number_pc] - 1;
+                    fi.kuci[number_pc] -= count_pc;
+                }
+                else if (fi.kuci[number_pc] == 1)
+                {
+                    fi.kuci[number_pc] -= 1;
+                }
+            }
+        }
+        fi.kuci[number - 1] -= count;
+        if (fi.kuci[number - 1] == 0)
+            cor += 1;
+        if (cor == kol_kuci)
+            gameover = 1;
+        printf("Ходов совершено %i \n", pl.movepl);
+        print_field();
+    }
+    printf("\nПроиграл игрок №%i\n", i - 1);
+
 }
 int main()
 {
     setlocale(LC_ALL, "Russian");
-    fi.kuci[0] = 2;
-    fi.kuci[1] = 3;
-    fi.kuci[2] = 4;
-    pl.gamers = 2;
-    print_info();
-    gamelogic();
+    setup();
+    //gamelogic();
+
+    game_s_pc();
     return 1;
 }
